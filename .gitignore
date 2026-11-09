@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.py[cod]
+.DS_Store
+/build/
+/dist/
+/setup/
+*.zip
+*.7z
+*.log
+/.env
+/.env.*
