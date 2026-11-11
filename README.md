@@ -1,45 +1,47 @@
+[![Русский](https://img.shields.io/badge/%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-181717?style=for-the-badge)](README.ru.md)
+
 # USD Log Collector
 
-Windows-утилита для сбора логов Microsoft Dynamics 365 Unified Service Desk. Закрывает USD и сохраняет ZIP-архив с именем из восьмизначного LDAP.
+A Windows utility for collecting Microsoft Dynamics 365 Unified Service Desk logs. It closes USD and saves a ZIP archive named after an eight-digit LDAP ID.
 
-## Возможности
+## Features
 
-- Сбор вложенных файлов из папки логов с пропуском символьных ссылок.
-- Проверка LDAP и доступности папок до закрытия USD.
-- Защита существующего архива от перезаписи и удаление нового частичного файла при ошибке.
+- Collects nested files from the log folder while skipping symbolic links.
+- Validates the LDAP ID and folder accessibility before closing USD.
+- Protects existing archives from overwriting and removes the new partial file if an error occurs.
 
-## Установка и запуск
+## Installation and startup
 
-Нужны Windows x64, Python 3.11–3.14 и [uv](https://docs.astral.sh/uv/). Версия среды и точные зависимости указаны в [.python-version](.python-version), [pyproject.toml](pyproject.toml) и [uv.lock](uv.lock).
+Requires Windows x64, Python 3.11–3.14, and [uv](https://docs.astral.sh/uv/). The runtime version and exact dependencies are listed in [.python-version](.python-version), [pyproject.toml](pyproject.toml), and [uv.lock](uv.lock).
 
 ```powershell
 uv sync --locked
 uv run --locked python main.py --destination "C:\Support\Logs"
 ```
 
-Папка назначения должна существовать. По умолчанию логи берутся из `%APPDATA%\Microsoft\Microsoft Dynamics® 365 Unified Service Desk\4.1.1.1319`. Для другого расположения задайте путь явно:
+The destination folder must already exist. By default, logs are read from `%APPDATA%\Microsoft\Microsoft Dynamics® 365 Unified Service Desk\4.1.1.1319`. Specify the path explicitly to use a different location:
 
 ```powershell
 uv run --locked python main.py --source "C:\Support\UsdLogs" --destination "C:\Support\Archives"
 ```
 
-### Сборка EXE
+### Building the EXE
 
-На Windows выполните:
+On Windows, run:
 
 ```powershell
 uv run --locked --group build pyinstaller main.spec --noconfirm
 ```
 
-Результат: `dist/usd-log-collector.exe`.
+Output: `dist/usd-log-collector.exe`.
 
-## Использование
+## Usage
 
-Введите LDAP из восьми цифр и нажмите "Сохранить". Программа принудительно закроет `UnifiedServiceDesk.exe` вместе с дочерними процессами и создаст `LDAP.zip` в выбранной папке. При совпадении имени выберите другую папку или переименуйте прежний архив.
+Enter an eight-digit LDAP ID and click "Сохранить" (Save). The application forcibly closes `UnifiedServiceDesk.exe` and its child processes, then creates `LDAP.zip` in the selected folder. If that name already exists, select another folder or rename the previous archive.
 
-Архив содержит диагностические данные USD. Выбирайте папку с подходящими правами доступа и проверяйте содержимое перед передачей.
+The archive contains USD diagnostic data. Choose a folder with appropriate access permissions and review the contents before sharing it.
 
-## Проверки
+## Checks
 
 ```powershell
 uv run --locked ruff check .
@@ -48,8 +50,8 @@ uv run --locked mypy
 uv run --locked pytest -W error
 ```
 
-Тесты используют временные файлы и подменяют Windows-команды. Они проверяют архивирование, ошибки и интерфейс без доступа к пользовательским логам.
+Tests use temporary files and mock Windows commands. They check archiving, error handling, and the interface without accessing user logs.
 
-## Ограничения
+## Limitations
 
-Сборка EXE и полный сценарий на Windows с установленным USD требуют отдельной проверки. Архивирование синхронное: при большом объёме логов окно может временно не отвечать, а повторное сохранение блокируется до завершения.
+The EXE build and the full workflow on Windows with USD installed require separate verification. Archiving is synchronous: with large logs, the window may temporarily stop responding, and another save is blocked until the operation completes.
